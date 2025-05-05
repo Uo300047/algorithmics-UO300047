@@ -48,20 +48,25 @@ public List<Integer> findNullPath() {
 private boolean findPath(int currentNode, List<Integer> path, boolean[] visited, int currentSum) {
     // If we've reached the destination node
     if (currentNode == n - 1) {
-        if (Math.abs(currentSum) <= tolerance) {
-            return true; 
-        }
-        return false;
+        return Math.abs(currentSum) <= tolerance;
     }
 
     for (int nextNode = 0; nextNode < n; nextNode++) {
         if (!visited[nextNode]) {
-            
+            int weight = weights[currentNode][nextNode];
+            int newSum = currentSum + weight;
+
+            int remainingSteps = n - path.size();
+
+            int minPossibleAddition = remainingSteps * minWeightNeg;
+            int maxPossibleAddition = remainingSteps * maxWeightPos;
+
+            if (newSum + minPossibleAddition > tolerance || newSum + maxPossibleAddition < -tolerance) {
+                continue; 
+            }
+
             visited[nextNode] = true;
             path.add(nextNode);
-
-           
-            int newSum = currentSum + weights[currentNode][nextNode];
 
             if (findPath(nextNode, path, visited, newSum)) {
                 return true;
@@ -73,6 +78,7 @@ private boolean findPath(int currentNode, List<Integer> path, boolean[] visited,
     }
     return false;
 }
+
 
 public void printGraph() {
     for (int i = 0; i < n; i++) {
